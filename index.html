@@ -256,6 +256,7 @@
       z-index: 2;
       align-self: stretch;
       min-width: 0;
+      overflow: hidden;
       margin: 7px;
       padding: 12px 10px;
       border: 1px solid color-mix(in srgb, var(--course-color) 22%, white);
@@ -287,15 +288,42 @@
     }
 
     @media (max-width: 680px) {
-      .app { width: min(100% - 22px, 520px); padding: 20px 0 34px; }
+      .app { width: calc(100% - 12px); padding: 14px 0 26px; }
       .brand p { display: none; }
       .today-button { padding: 0 13px; }
       .summary { padding: 24px 21px; border-radius: 22px; }
       .next-class { padding: 17px 18px; }
-      .week-panel { padding: 14px; border-radius: 20px; }
-      .scroll-hint { display: block; }
-      .schedule-scroll { margin: 0 -14px; width: calc(100% + 28px); padding: 0 14px 8px; }
-      .week-grid { min-width: 1240px; grid-template-columns: 110px repeat(7, minmax(160px, 1fr)); }
+      .week-panel { padding: 8px; border-radius: 16px; }
+      .week-toolbar { padding: 4px 4px 12px; }
+      .scroll-hint { display: none; }
+      .schedule-scroll { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+      .week-grid {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: 50px repeat(7, minmax(0, 1fr));
+        grid-template-rows: 50px repeat(4, minmax(96px, auto));
+        border-radius: 12px;
+      }
+      .corner-cell { gap: 1px; padding: 2px 1px; }
+      .corner-cell strong, .corner-cell span { font-size: .68rem; }
+      .day-label { gap: 2px; padding: 4px 1px; }
+      .day-name { font-size: .72rem; white-space: nowrap; }
+      .day-date { font-size: .66rem; }
+      .period-header { gap: 2px; padding: 4px 2px; }
+      .period-header strong { font-size: .72rem; line-height: 1.25; }
+      .period-header span { display: none; }
+      .course-card {
+        margin: 2px;
+        padding: 5px 3px;
+        border-left-width: 2px;
+        border-radius: 7px;
+        text-align: center;
+        box-shadow: none;
+      }
+      .course-time { display: none; }
+      .course-name { margin: 0 0 4px; font-size: .72rem; line-height: 1.25; word-break: break-all; }
+      .course-meta { justify-content: center; margin-top: 2px; font-size: .68rem; line-height: 1.2; word-break: break-all; }
+      .course-meta svg { display: none; }
       .footer-note { text-align: left; line-height: 1.55; }
     }
 
@@ -449,8 +477,8 @@
       return `<article class="course-card" style="--course-color:${course.color};grid-column:${course.day + 1};grid-row:${placement.row} / span ${placement.span}" aria-label="${escapeHtml(course.name)}，${weekNames[course.day - 1]}，${course.periods}节">
         <div class="course-time">${course.periods} 节 · ${periodTimes[course.periods]}</div>
         <div class="course-name">${escapeHtml(course.name)}</div>
-        <div class="course-meta">${icons.room}<span>${escapeHtml(course.room)}</span></div>
-        <div class="course-meta">${icons.teacher}<span>${escapeHtml(course.teacher)}</span></div>
+        <div class="course-meta course-room">${icons.room}<span>${escapeHtml(course.room)}</span></div>
+        <div class="course-meta course-teacher">${icons.teacher}<span>${escapeHtml(course.teacher)}</span></div>
       </article>`;
     }
 
