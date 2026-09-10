@@ -177,10 +177,10 @@
 
     .week-grid {
       display: grid;
-      grid-template-columns: 126px repeat(4, minmax(205px, 1fr));
-      grid-template-rows: 64px repeat(7, minmax(116px, auto));
+      grid-template-columns: 126px repeat(7, minmax(165px, 1fr));
+      grid-template-rows: 72px repeat(4, minmax(150px, auto));
       grid-auto-flow: row;
-      min-width: 980px;
+      min-width: 1280px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 17px;
@@ -295,7 +295,7 @@
       .week-panel { padding: 14px; border-radius: 20px; }
       .scroll-hint { display: block; }
       .schedule-scroll { margin: 0 -14px; width: calc(100% + 28px); padding: 0 14px 8px; }
-      .week-grid { min-width: 930px; grid-template-columns: 110px repeat(4, minmax(205px, 1fr)); }
+      .week-grid { min-width: 1240px; grid-template-columns: 110px repeat(7, minmax(160px, 1fr)); }
       .footer-note { text-align: left; line-height: 1.55; }
     }
 
@@ -339,8 +339,8 @@
           <button class="nav-button" id="nextWeek" type="button" aria-label="下一周">→</button>
         </div>
       </div>
-      <p class="scroll-hint">每一行代表一天，每一列代表一个大节；可左右滑动查看</p>
-      <div class="schedule-scroll" role="region" aria-label="课表按星期分行、按节次分列" tabindex="0">
+      <p class="scroll-hint">星期一至星期日横向排列，第1至第4大节纵向排列；可左右滑动查看</p>
+      <div class="schedule-scroll" role="region" aria-label="课表按星期分列、按节次分行" tabindex="0">
         <div class="week-grid" id="weekGrid"></div>
       </div>
       <p class="empty-state" id="emptyState">本周暂无课程，稍作休整吧。</p>
@@ -370,12 +370,12 @@
     ];
 
     const periodPlacement = {
-      '1-2': { column: 2, span: 1 },
-      '3-4': { column: 3, span: 1 },
-      '1-4': { column: 2, span: 2 },
-      '5-6': { column: 4, span: 1 },
-      '7-8': { column: 5, span: 1 },
-      '5-8': { column: 4, span: 2 }
+      '1-2': { row: 2, span: 1 },
+      '3-4': { row: 3, span: 1 },
+      '1-4': { row: 2, span: 2 },
+      '5-6': { row: 4, span: 1 },
+      '7-8': { row: 5, span: 1 },
+      '5-8': { row: 4, span: 2 }
     };
 
     const courses = [
@@ -446,7 +446,7 @@
 
     function courseCard(course) {
       const placement = periodPlacement[course.periods];
-      return `<article class="course-card" style="--course-color:${course.color};grid-column:${placement.column} / span ${placement.span};grid-row:${course.day + 1}" aria-label="${escapeHtml(course.name)}，${weekNames[course.day - 1]}，${course.periods}节">
+      return `<article class="course-card" style="--course-color:${course.color};grid-column:${course.day + 1};grid-row:${placement.row} / span ${placement.span}" aria-label="${escapeHtml(course.name)}，${weekNames[course.day - 1]}，${course.periods}节">
         <div class="course-time">${course.periods} 节 · ${periodTimes[course.periods]}</div>
         <div class="course-name">${escapeHtml(course.name)}</div>
         <div class="course-meta">${icons.room}<span>${escapeHtml(course.room)}</span></div>
@@ -469,22 +469,22 @@
         const day = index + 1;
         const date = addDays(start, index);
         const isToday = selectedWeek === initialWeek && day === currentDay;
-        return `<div class="day-label${isToday ? ' is-today' : ''}" style="grid-column:1;grid-row:${day + 1}">
+        return `<div class="day-label${isToday ? ' is-today' : ''}" style="grid-column:${day + 1};grid-row:1">
           <span class="day-name">${name}</span><span class="day-date">${pad(date.getMonth()+1)}.${pad(date.getDate())}</span>
         </div>`;
       }).join('');
 
-      const periodHeaders = timeBlocks.map((block, index) => `<div class="period-header" style="grid-column:${index + 2};grid-row:1">
+      const periodHeaders = timeBlocks.map((block, index) => `<div class="period-header" style="grid-column:1;grid-row:${index + 2}">
         <strong>${block.label}</strong><span>${block.periods}节 · ${block.time}</span>
       </div>`).join('');
 
       const tableCells = weekNames.flatMap((_, dayIndex) => timeBlocks.map((__, periodIndex) => {
         const isToday = selectedWeek === initialWeek && dayIndex + 1 === currentDay;
-        return `<div class="schedule-cell${isToday ? ' is-today' : ''}" style="grid-column:${periodIndex + 2};grid-row:${dayIndex + 2}" aria-hidden="true"></div>`;
+        return `<div class="schedule-cell${isToday ? ' is-today' : ''}" style="grid-column:${dayIndex + 2};grid-row:${periodIndex + 2}" aria-hidden="true"></div>`;
       })).join('');
 
       document.getElementById('weekGrid').innerHTML = `
-        <div class="corner-cell" aria-label="行是星期，列是节次"><strong>星期 ↓</strong><span>节次 →</span></div>
+        <div class="corner-cell" aria-label="列是星期，行是节次"><strong>星期 →</strong><span>节次 ↓</span></div>
         ${periodHeaders}
         ${dayLabels}
         ${tableCells}
