@@ -179,6 +179,7 @@
       display: grid;
       grid-template-columns: 126px repeat(4, minmax(205px, 1fr));
       grid-template-rows: 64px repeat(7, minmax(116px, auto));
+      grid-auto-flow: row;
       min-width: 980px;
       overflow: hidden;
       border: 1px solid var(--line);
@@ -206,12 +207,17 @@
     .corner-cell {
       grid-column: 1;
       grid-row: 1;
+      flex-direction: column;
+      gap: 4px;
       padding: 10px;
       color: var(--muted);
       background: #f1f6f8;
       font-size: .8rem;
       font-weight: 700;
     }
+
+    .corner-cell strong { color: var(--ink); font-size: .84rem; }
+    .corner-cell span { font-size: .74rem; }
 
     .period-header {
       flex-direction: column;
@@ -333,8 +339,8 @@
           <button class="nav-button" id="nextWeek" type="button" aria-label="下一周">→</button>
         </div>
       </div>
-      <p class="scroll-hint">可左右滑动查看一天的四个大节</p>
-      <div class="schedule-scroll" role="region" aria-label="每周课程表" tabindex="0">
+      <p class="scroll-hint">每一行代表一天，每一列代表一个大节；可左右滑动查看</p>
+      <div class="schedule-scroll" role="region" aria-label="课表按星期分行、按节次分列" tabindex="0">
         <div class="week-grid" id="weekGrid"></div>
       </div>
       <p class="empty-state" id="emptyState">本周暂无课程，稍作休整吧。</p>
@@ -357,10 +363,10 @@
     };
 
     const timeBlocks = [
-      { periods: '1-2', label: '上午第一大节', time: '08:00–09:35' },
-      { periods: '3-4', label: '上午第二大节', time: '09:55–11:30' },
-      { periods: '5-6', label: '下午第一大节', time: '14:00–15:35' },
-      { periods: '7-8', label: '下午第二大节', time: '15:55–17:30' }
+      { periods: '1-2', label: '第 1 大节', time: '上午 · 08:00–09:35' },
+      { periods: '3-4', label: '第 2 大节', time: '上午 · 09:55–11:30' },
+      { periods: '5-6', label: '第 3 大节', time: '下午 · 14:00–15:35' },
+      { periods: '7-8', label: '第 4 大节', time: '下午 · 15:55–17:30' }
     ];
 
     const periodPlacement = {
@@ -478,7 +484,7 @@
       })).join('');
 
       document.getElementById('weekGrid').innerHTML = `
-        <div class="corner-cell">节次 / 星期</div>
+        <div class="corner-cell" aria-label="行是星期，列是节次"><strong>星期 ↓</strong><span>节次 →</span></div>
         ${periodHeaders}
         ${dayLabels}
         ${tableCells}
